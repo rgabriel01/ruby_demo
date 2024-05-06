@@ -1,24 +1,12 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Getting started
 
-Things you may want to cover:
+### Building docker stuff
+docker build -t app .
 
-* Ruby version
+### Run migration
+docker-compose run web bin/rails db:migrate RAILS_ENV=development
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+### Rails console
+docker-compose run web bin/rails console -e development
