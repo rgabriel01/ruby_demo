@@ -1,0 +1,40 @@
+version: '3'
+services:
+  db:
+    image: postgres:14.2-alpine
+    container_name: rails_demo_database
+    volumes:
+      - rails_demo_postgres_data:/var/lib/postgresql/data
+    command: "postgres -c 'max_connections=500'"
+    environment:
+      POSTGRES_DB: rails_demodb_development
+      POSTGRES_USER: mondbuser
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+  web:
+    build:
+      context: .
+      dockerfile: dev.dockerfile
+    command: "bundle exec rails server"
+    environment:
+      RAILS_ENV: development
+      POSTGRES_HOST: db
+      POSTGRES_DB: rails_demodb_development
+      POSTGRES_USER: mondbuser
+      POSTGRES_PASSWORD: password123
+      RAILS_MASTER_KEY: 7a7330c4f92964f7106efd18f45c5c31
+    volumes:
+      - rails_demo_app_storage:/rails/storage
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+networks:
+  default:
+    name: local-demo-net
+
+volumes:
+  rails_demo_postgres_data: {}
+  rails_demo_app_storage: {}

@@ -1,5 +1,7 @@
 # syntax = docker/dockerfile:1
 
+# e.g docker build . -t rails-demo --build-arg BUNDLER_VERSION=1 --build-arg=DEFAULT_PORT=3000
+
 ARG RUBY_VERSION=2.7.0
 ARG DEFAULT_PORT 3000
 
@@ -20,10 +22,13 @@ ENV BUNDLE_WITHOUT=""
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libvips pkg-config
+    apt-get install --no-install-recommends -y build-essential git libvips libpq-dev pkg-config bash bash-completion libffi-dev tzdata nodejs npm yarn && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /usr/share/man
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
+
 RUN bundle install
 
 # Copy application code to /rails
@@ -45,10 +50,10 @@ EXPOSE 3000
 
 # for those running WSL
 # this instructs docker to use 0.0.0.0 as its IP address; able to use localhost on browser
-#CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
+CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
 
 # this instructs docker to use 0.0.0.0 as its IP address; so that we are able to use localhost on browser
-CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
+#CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
 
 
 # to run do
@@ -56,3 +61,6 @@ CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
 # -t tags/names the image
 # . just states that we are building under the same current directory
 # docker build -f dev.dockerfile -t rails_demo .
+
+# reference
+# https://www.youtube.com/watch?v=ignW-lxGEc0
